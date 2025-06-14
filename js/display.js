@@ -8,9 +8,10 @@ const display = {
         }
         let html = '';
         tracks.forEach(track => {
+            const imageUrl = track.album?.cover_medium || 'https://placehold.co/180x180/6C5CE7/FFFFFF?text=Music';
             html += `
                 <div class="card" onclick="main.addToRecentlyPlayed(${track.id})">
-                    <img src="${track.album.cover_medium}" alt="${track.album.title}">
+                    <img src="${imageUrl}" alt="${track.album?.title || 'Album Art'}">
                     <div class="card-title">${track.title}</div>
                     <div class="card-subtitle">${track.artist.name}</div>
                 </div>
@@ -27,9 +28,10 @@ const display = {
         }
         let html = '';
         artists.forEach(artist => {
+            const imageUrl = artist.picture_medium || 'https://placehold.co/180x180/6C5CE7/FFFFFF?text=Artist';
             html += `
                 <div class="card">
-                    <img src="${artist.picture_medium}" alt="${artist.name}">
+                    <img src="${imageUrl}" alt="${artist.name}">
                     <div class="card-title">${artist.name}</div>
                 </div>
             `;
@@ -45,10 +47,12 @@ const display = {
         }
         let html = '';
         genres.forEach(genre => {
-            // Deezer API doesn't provide genre images in the chart, so we use a placeholder color
+            // Use the image provided by the Deezer API for genres
+            const imageUrl = genre.picture_medium || 'https://placehold.co/180x180/00CEC9/FFFFFF?text=Genre';
             html += `
-                <div class="card" style="background-color: ${'#' + Math.floor(Math.random()*16777215).toString(16)};">
-                    <div class="card-title" style="color: white;">${genre.name}</div>
+                <div class="card">
+                    <img src="${imageUrl}" alt="${genre.name}">
+                    <div class="card-title">${genre.name}</div>
                 </div>
             `;
         });

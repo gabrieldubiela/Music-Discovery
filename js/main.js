@@ -7,30 +7,34 @@ const main = {
     },
 
     fetchAndDisplayTrends: async function() {
-        // Fetch and display trending tracks 
+        // Fetch and display trending tracks
         const topTracks = await deezerApi.getChart('tracks');
         display.renderTracks(topTracks.slice(0, 10), 'trending-tracks-container');
 
-        // Fetch and display trending artists 
+        // Fetch and display trending artists
         const topArtists = await deezerApi.getChart('artists');
         display.renderArtists(topArtists.slice(0, 10), 'trending-artists-container');
 
-        // Fetch and display trending genres (derived from top tracks) 
-        const genreChart = await deezerApi.getChart('genres');
-        if (genreChart) {
-             display.renderGenres(genreChart.slice(0,10), 'trending-genres-container');
-        }
+        // Fetch and display trending genres
+        const topGenres = await deezerApi.getChart('genres');
+        display.renderGenres(topGenres.slice(0, 10), 'trending-genres-container');
     },
 
     getRecentlyPlayed: function() {
-        return JSON.parse(localStorage.getItem('recentlyPlayed')) || [];
+        // Safely parse JSON from localStorage
+        try {
+            return JSON.parse(localStorage.getItem('recentlyPlayed')) || [];
+        } catch (e) {
+            return [];
+        }
     },
 
     addToRecentlyPlayed: async function(trackId) {
-        // This is a simulation. In a full app, this would be called from the player.
+        // In a full app, this would be called from the player.
         console.log(`Simulating playing track ID: ${trackId}`);
-        const response = await fetch(`${deezerApi.proxy}https://api.deezer.com/track/${trackId}`);
-        const track = await response.json();
+        
+        // Fetch the full track details
+        const track = await deezerApi.getTrack(trackId);
 
         if (track && track.id) {
             let recentlyPlayed = this.getRecentlyPlayed();
