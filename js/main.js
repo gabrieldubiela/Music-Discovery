@@ -1,12 +1,54 @@
-// The main JavaScript file for the application 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Music Discovery App Initialized");
-    // Simple function to test API call on page load
-    fetchTrending();
-});
+// The main JavaScript file for the application
+const main = {
+    init: function() {
+        console.log("Music Discovery App Initialized");
+        this.fetchAndDisplayTrends();
+        this.displayRecentlyPlayed();
+    },
 
-async function fetchTrending() {
-    // Example: Fetch trending tracks from Deezer
-    const trendingData = await deezerApi.search('top tracks');
-    display.renderTracks(trendingData.data, '#trending');
-}
+    fetchAndDisplayTrends: async function() {
+        // Fetch and display trending tracks 
+        const topTracks = await deezerApi.getChart('tracks');
+        display.renderTracks(topTracks.slice(0, 10), 'trending-tracks-container');
+
+        // Fetch and display trending artists 
+        const topArtists = await deezerApi.getChart('artists');
+        display.renderArtists(topArtists.slice(0, 10), 'trending-artists-container');
+
+        // Fetch and display trending genres (derived from top tracks) 
+        const genreChart = await deezerApi.getChart('genres');
+        if (genreChart) {
+             display.renderGenres(genreChart.slice(0,10), 'trending-genres-container');
+        }
+    },
+
+    getRecentlyPlayed: function() {
+        return JSON.parse(localStorage.getItem('recentlyPlayed')) || [];
+    },
+
+    addToRecentlyPlayed: async function(trackId) {
+        // This is a simulation. In a full app, this would be called from the player.
+        console.log(`Simulating playing track ID: ${trackId}`);
+        const response = await fetch(`${deezerApi.proxy}https://api.deezer.com/track/${trackId}`);
+        const track = await response.json();
+
+        if (track && track.id) {
+            let recentlyPlayed = this.getRecentlyPlayed();
+            // Remove if already in the list to move it to the front
+            recentlyPlayed = recentlyPlayed.filter(t => t.id !== track.id);
+            // Add to the beginning of the array
+            recentlyPlayed.unshift(track);
+            // Keep only the last 5 played songs
+            recentlyPlayed = recentlyPlayed.slice(0, 5);
+            localStorage.setItem('recentlyPlayed', JSON.stringify(recentlyPlayed));
+            this.displayRecentlyPlayed();
+        }
+    },
+
+    displayRecentlyPlayed: function() {
+        const recentlyPlayed = this.getRecentlyPlayed();
+        display.renderTracks(recentlyPlayed, 'recently-played-container', true);
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => main.init());

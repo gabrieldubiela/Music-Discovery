@@ -10,27 +10,42 @@
     <script src="js/deezerApi.js"></script>
     <script src="js/audioDbApi.js"></script>
     <script src="js/display.js"></script>
+    <script src="js/commonComponents.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Music Discovery</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="playlist.html">My Playlists</a>
-            <a href="login.html">Login</a>
-        </nav>
-    </header>
+    <header id="main-header"></header>
     <main>
-        <section id="trending">
-            <h2>Trending Now</h2>
-            </section>
-        <section id="search">
+        <section id="search-section">
             <input type="text" id="search-input" placeholder="Search for songs, artists, albums...">
-            <div id="search-results"></div>
         </section>
+
+        <section id="trends">
+            <h2>Trends</h2>
+            <div id="trending-tracks">
+                <h3>Trending Tracks</h3>
+                <div class="card-container" id="trending-tracks-container">
+                    </div>
+            </div>
+            <div id="trending-artists">
+                <h3>Trending Artists</h3>
+                <div class="card-container" id="trending-artists-container">
+                    </div>
+            </div>
+            <div id="trending-genres">
+                <h3>Trending Genres</h3>
+                <div class="card-container" id="trending-genres-container">
+                    </div>
+            </div>
+        </section>
+
+        <section id="recently-played">
+            <h2>Recently Played</h2>
+            <div class="card-container" id="recently-played-container">
+                </div>
+        </section>
+
     </main>
-    <footer>
-        <p>&copy; 2025 Music Discovery</p>
-    </footer>
+
+    <footer id="main-footer"></footer>
 </body>
 </html>

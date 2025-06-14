@@ -19,25 +19,84 @@ header {
     text-align: center;
 }
 
-button, input[type="submit"] {
-    background-color: #6C5CE7;
+nav a {
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-button:hover, input[type="submit"]:hover {
-    font-size: 120%;
-    background-color: #00CEC9;
+main {
+    padding: 1rem;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+/* New and Updated Styles */
+.card-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 1rem; /* for scrollbar */
 }
 
 .card {
     background-color: white;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0.5rem;
     padding: 1rem;
-    margin: 1rem;
+    flex: 0 0 auto; /* Prevent shrinking/growing */
+    width: 180px; /* Fixed width for cards */
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-subtitle {
+    font-size: 0.9em;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#search-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+#recently-played-container .card {
+    border-left: 5px solid #00CEC9; /* Accent for recently played */
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    background-color: #eee;
 }
