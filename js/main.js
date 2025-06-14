@@ -34,17 +34,38 @@ const main = {
         const newReleases = await deezerApi.getNewReleases();
         display.renderAlbums(newReleases.slice(0, 10), 'new-releases-container');
     },
-
     getRecentlyPlayed: function() {
-        // ... (existing function remains the same)
+        // Safely parse JSON from localStorage
+        try {
+            return JSON.parse(localStorage.getItem('recentlyPlayed')) || [];
+        } catch (e) {
+            return [];
+        }
     },
 
     addToRecentlyPlayed: async function(trackId) {
-        // ... (existing function remains the same)
+        // In a full app, this would be called from the player.
+        console.log(`Simulating playing track ID: ${trackId}`);
+        
+        // Fetch the full track details
+        const track = await deezerApi.getTrack(trackId);
+
+        if (track && track.id) {
+            let recentlyPlayed = this.getRecentlyPlayed();
+            // Remove if already in the list to move it to the front
+            recentlyPlayed = recentlyPlayed.filter(t => t.id !== track.id);
+            // Add to the beginning of the array
+            recentlyPlayed.unshift(track);
+            // Keep only the last 5 played songs
+            recentlyPlayed = recentlyPlayed.slice(0, 5);
+            localStorage.setItem('recentlyPlayed', JSON.stringify(recentlyPlayed));
+            this.displayRecentlyPlayed();
+        }
     },
 
     displayRecentlyPlayed: function() {
-        // ... (existing function remains the same)
+        const recentlyPlayed = this.getRecentlyPlayed();
+        display.renderTracks(recentlyPlayed, 'recently-played-container', true);
     }
 };
 
