@@ -94,6 +94,11 @@ section {
     border-left: 5px solid #00CEC9; /* Accent for recently played */
 }
 
+/* Added utility class to hide elements */
+.hidden {
+    display: none;
+}
+
 footer {
     text-align: center;
     padding: 1rem;
