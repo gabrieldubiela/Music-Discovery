@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <script src="js/searchResultsPage.js" type="module" defer></script>
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <main>
+        <h1>Search Results for "<span id="search-query-display"></span>"</h1>
+
+        <section id="tracks-results-section" class="results-section">
+            <h2>Tracks</h2>
+            <div class="card-container" id="tracks-results-container">
+                <p>No tracks found.</p>
+            </div>
+        </section>
+
+        <section id="artists-results-section" class="results-section">
+            <h2>Artists</h2>
+            <div class="card-container" id="artists-results-container">
+                <p>No artists found.</p>
+            </div>
+        </section>
+
+        <section id="albums-results-section" class="results-section">
+            <h2>Albums</h2>
+            <div class="card-container" id="albums-results-container">
+                <p>No albums found.</p>
+            </div>
+        </section>
+        
+    </main>
+
+    <footer id="main-footer"></footer>
+</body>
+</html>

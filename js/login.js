@@ -1,115 +1,137 @@
-// A simple in-memory "database" for demonstration. In a real app,
-// this would be replaced by server-side authentication and a database.
-const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-const LOGGED_IN_USER_KEY = 'loggedInUser';
+import { createHeaderFooter } from './commonComponents.mjs';
 
-/**
- * Handles user registration.
- * @param {string} username - The username for registration.
- * @param {string} password - The password for registration.
- * @returns {boolean} - True if registration is successful, false otherwise (e.g., user already exists).
- */
-export function registerUser(username, password) {
-    if (users.some(user => user.username === username)) {
-        console.warn('Registration failed: Username already exists.');
-        return false;
+// Função para exibir mensagens na tela
+function displayMessage(containerId, message, type) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.textContent = message;
+    container.className = `message-container ${type}`; // Adiciona a classe de tipo para estilização (error, success)
+    container.classList.remove('hidden');
+
+    setTimeout(() => {
+        container.classList.add('hidden');
+        container.textContent = ''; // Limpa a mensagem
+    }, 5000); // Mensagem desaparece após 5 segundos
+}
+
+async function fetchUsers() {
+    try {
+        const response = await fetch('json/users.json'); // Caminho para o seu JSON
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        displayMessage('login-message-container', 'Failed to load user data. Please try again later.', 'error');
+        return []; // Retorna um array vazio em caso de erro
     }
-    const newUser = { username, password };
-    users.push(newUser);
+}
+
+async function saveUsers(users) {
+    // Em um ambiente de desenvolvimento (local), podemos simular salvamento no localStorage.
+    // Em produção, isso seria uma chamada para um backend.
     localStorage.setItem('registeredUsers', JSON.stringify(users));
-    console.log('User registered successfully:', username);
-    return true;
 }
 
-/**
- * Handles user login.
- * @param {string} username - The username for login.
- * @param {string} password - The password for login.
- * @returns {boolean} - True if login is successful, false otherwise.
- */
-export function loginUser(username, password) {
-    const user = users.find(u => u.username === username && u.password === password);
-    if (user) {
-        localStorage.setItem(LOGGED_IN_USER_KEY, JSON.stringify(user));
-        console.log('Login successful for:', username);
-        return true;
-    } else {
-        console.warn('Login failed: Invalid username or password.');
-        return false;
-    }
-}
+document.addEventListener('DOMContentLoaded', async () => {
+    createHeaderFooter(); // Garante que o header e footer sejam criados
 
-/**
- * Logs out the current user.
- */
-export function logoutUser() {
-    localStorage.removeItem(LOGGED_IN_USER_KEY);
-    console.log('User logged out.');
-    // Redirect to login page or update UI
-    if (window.location.pathname !== '/login.html') {
-        window.location.href = 'login.html';
-    }
-}
-
-/**
- * Checks if a user is currently logged in.
- * @returns {object|null} - The logged-in user object if found, otherwise null.
- */
-export function getCurrentUser() {
-    const user = localStorage.getItem(LOGGED_IN_USER_KEY);
-    return user ? JSON.parse(user) : null;
-}
-
-// Example usage in login.html (assuming you have input fields with IDs)
-// Add this script inside a <script> tag in your login.html
-/*
-import { registerUser, loginUser, logoutUser } from './js/login.js'; // Adjust path if needed
-
-document.addEventListener('DOMContentLoaded', () => {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
-    const logoutButton = document.getElementById('logout-button'); // If you have a logout button on another page
+    const showRegisterButton = document.getElementById('show-register-button');
+    const showLoginButton = document.getElementById('show-login-button');
+    const messageContainer = document.getElementById('login-message-container');
 
+    let users = await fetchUsers(); // Carrega os usuários do JSON
+
+    // Se houver usuários registrados no localStorage (para simulação de registro), use-os.
+    const localStorageUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    if (localStorageUsers.length > 0) {
+        // Mescla ou sobrescreve, dependendo da sua estratégia.
+        // Aqui, vamos adicionar usuários do localStorage se não existirem no JSON inicial.
+        localStorageUsers.forEach(lsUser => {
+            if (!users.some(u => u.username === lsUser.username)) {
+                users.push(lsUser);
+            }
+        });
+    }
+
+
+    // Lógica para mostrar/esconder seções
+    showRegisterButton.addEventListener('click', () => {
+        loginSection.classList.add('hidden');
+        registerSection.classList.remove('hidden');
+        messageContainer.classList.add('hidden'); // Oculta mensagens ao trocar de formulário
+    });
+
+    showLoginButton.addEventListener('click', () => {
+        registerSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+        messageContainer.classList.add('hidden'); // Oculta mensagens ao trocar de formulário
+    });
+
+    // Lógica de Login
     if (loginForm) {
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            const username = document.getElementById('login-username').value;
+            const username = document.getElementById('login-username').value.trim();
             const password = document.getElementById('login-password').value;
-            if (loginUser(username, password)) {
-                alert('Login successful!');
-                window.location.href = 'index.html'; // Redirect to home page
-            } else {
-                alert('Invalid username or password.');
+
+            const user = users.find(u => u.username === username);
+
+            if (!user) {
+                displayMessage('login-message-container', 'Username does not exist.', 'error');
+                return;
             }
+
+            if (user.password !== password) {
+                displayMessage('login-message-container', 'Incorrect password.', 'error');
+                return;
+            }
+
+            // Login successful
+            localStorage.setItem('isLoggedIn', 'true');
+            // Você pode armazenar o username ou outros dados do usuário aqui se precisar
+            // localStorage.setItem('loggedInUsername', user.username);
+            displayMessage('login-message-container', 'Login successful! Redirecting...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html'; // Redireciona para a página inicial
+            }, 1500); // Pequeno atraso para o usuário ver a mensagem
         });
     }
 
+    // Lógica de Registro
     if (registerForm) {
-        registerForm.addEventListener('submit', (event) => {
+        registerForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const username = document.getElementById('register-username').value;
+            const username = document.getElementById('register-username').value.trim();
+            const email = document.getElementById('register-email').value.trim();
             const password = document.getElementById('register-password').value;
-            if (registerUser(username, password)) {
-                alert('Registration successful! You can now log in.');
-                // Optionally redirect to login or clear form
-                document.getElementById('register-form').reset();
-            } else {
-                alert('Username already exists.');
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                displayMessage('login-message-container', 'Passwords do not match.', 'error');
+                return;
             }
+
+            if (users.some(u => u.username === username)) {
+                displayMessage('login-message-container', 'Username already exists. Please choose another.', 'error');
+                return;
+            }
+
+            const newUser = { username, email, password };
+            users.push(newUser);
+            await saveUsers(users); // Salva o novo usuário (simulado)
+
+            displayMessage('login-message-container', 'Registration successful! You can now log in.', 'success');
+            registerForm.reset(); // Limpa o formulário de registro
+            // Alterna para a tela de login automaticamente após o registro
+            registerSection.classList.add('hidden');
+            loginSection.classList.remove('hidden');
         });
     }
-
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            logoutUser();
-            alert('You have been logged out.');
-        });
-    }
-
-    // Example check on non-login pages to ensure user is logged in
-    // if (window.location.pathname !== '/login.html' && !getCurrentUser()) {
-    //     alert('Please log in to access this page.');
-    //     window.location.href = 'login.html';
-    // }
 });
-*/

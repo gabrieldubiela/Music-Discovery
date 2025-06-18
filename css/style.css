@@ -1,5 +1,4 @@
-/* css/style.css */
-
+/* --- ESTILOS JÁ EXISTENTES --- */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #F5F6FA;
@@ -7,6 +6,8 @@ body {
     margin: 0;
     padding: 0;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap');
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Montserrat', sans-serif;
@@ -17,29 +18,132 @@ header {
     color: white;
     padding: 1rem;
     text-align: center;
+    display: flex;
+    flex-direction: column; /* Organiza os elementos em coluna */
+    align-items: center; /* Centraliza horizontalmente */
+    gap: 25px; /* Espaçamento maior entre a linha superior e a pesquisa */
 }
 
-nav a {
+.header-content {
+    width: 100%;
+    max-width: 1300px; /* Aumenta um pouco a largura máxima do conteúdo do header */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Garante que as linhas fiquem centralizadas */
+    gap: 25px; /* Espaçamento entre as duas linhas principais */
+}
+
+/* Nova classe para a primeira linha do header */
+.header-top-row {
+    display: flex;
+    justify-content: space-between; /* Espaçamento entre esquerda e direita */
+    align-items: center;
+    width: 100%; /* Ocupa a largura total do header-content */
+    padding: 0 15px; /* Padding para não colar nas bordas */
+}
+
+.site-title {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Aumenta o espaço entre o ícone e o texto */
+}
+
+.site-icon {
+    width: 45px; /* Aumenta um pouco o tamanho do ícone */
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.site-title h1 {
+    font-size: 1.8em; /* Aumenta o tamanho da fonte do título */
+    margin: 0; /* Remove margem padrão do h1 */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Destaque com sombra */
+}
+
+/* Estilo para a navegação principal (home, my playlist, login) */
+.main-nav {
+    display: flex;
+    gap: 25px; /* Aumenta o espaço entre os links */
+}
+
+.main-nav a {
     color: white;
-    margin: 0 15px;
     text-decoration: none;
     font-weight: bold;
+    font-size: 1.15em; /* Aumenta o tamanho da fonte dos links */
+    padding: 8px 15px; /* Adiciona padding para um visual de botão/destaque */
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.main-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Fundo sutil ao passar o mouse */
+    transform: translateY(-2px); /* Efeito de leve levantamento */
+}
+
+/* Wrapper para a seção de busca para garantir centralização e largura controlada */
+.search-section-wrapper {
+    width: 100%;
+    max-width: 700px; /* Ou o que preferir para a largura da busca */
+    margin: 1rem auto 0; /* Centraliza a barra de busca abaixo do nav */
+    display: flex;
+    flex-direction: column; /* Para a mensagem ficar abaixo do input */
+    align-items: center; /* Centraliza o input e o botão */
+}
+
+.search-container {
+    display: flex;
+    width: 100%;
+    max-width: 500px; /* Limita a largura do input/botão */
+    background-color: white;
+    border-radius: 25px;
+    overflow: hidden; /* Para cantos arredondados */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-container input {
+    flex-grow: 1;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #333;
+    background: transparent;
+}
+
+.search-container button {
+    background-color: #6C5CE7;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.search-container button:hover {
+    background-color: #5b4ac9;
+    transform: translateY(-2px);
 }
 
 main {
-    padding: 1rem;
+    /* Remova o max-width e margin: auto daqui, o que fará o main ocupar a largura total */
+    padding: 0; /* O padding será gerenciado pelas seções internas */
+    box-sizing: border-box;
+    min-height: calc(100vh - 200px); /* Ajusta um pouco o min-height, considerando o footer maior */
 }
 
 section {
     margin-bottom: 2rem;
+    padding: 0 1rem;
 }
 
-/* New and Updated Styles */
 .card-container {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 1rem; /* for scrollbar */
+    padding-bottom: 1rem;
 }
 
 .card {
@@ -48,8 +152,8 @@ section {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin: 0.5rem;
     padding: 1rem;
-    flex: 0 0 auto; /* Prevent shrinking/growing */
-    width: 180px; /* Fixed width for cards */
+    flex: 0 0 auto;
+    width: 180px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
@@ -76,32 +180,214 @@ section {
 
 .card-subtitle {
     font-size: 0.9em;
-    color: #555;
+    color: #666;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-#search-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
+.no-content-message {
+    width: 100%; /* Faz com que a mensagem ocupe a largura total */
+    text-align: center;
+    padding: 1rem;
+    color: #666;
+    font-style: italic;
+    box-sizing: border-box; /* Inclui padding na largura total */
 }
 
-#recently-played-container .card {
-    border-left: 5px solid #00CEC9; /* Accent for recently played */
+.no-content-message p {
+    margin: 0; /* Remove margem padrão de parágrafo dentro da mensagem */
 }
 
-/* Added utility class to hide elements */
 .hidden {
-    display: none;
+    display: none !important; /* Importante para garantir que override */
+}
+
+/* --- ESTILOS NOVOS PARA LOGIN/REGISTRO --- */
+
+.auth-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px; /* Largura máxima para o formulário */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 2rem auto; /* Garante margem superior/inferior quando não centralizado por main */
+}
+
+.auth-form-section h2 {
+    color: #6C5CE7;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 2em;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"] {
+    width: calc(100% - 20px); /* Ajusta largura com padding */
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box; /* Inclui padding e borda na largura */
+}
+
+.auth-button {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.primary-button {
+    background-color: #6C5CE7;
+    color: white;
+    margin-top: 1rem;
+}
+
+.primary-button:hover {
+    background-color: #5A4ADF;
+    transform: translateY(-2px);
+}
+
+.auth-toggle-text {
+    margin-top: 1.5rem;
+    font-size: 0.95em;
+    color: #777;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: #00CEC9; /* Cor de destaque para o link */
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1em;
+    font-family: 'Roboto', sans-serif; /* Garante a mesma fonte */
+    padding: 0;
+    transition: color 0.2s ease-in-out;
+}
+
+.link-button:hover {
+    color: #00A39C;
+}
+
+/* Estilos para as mensagens (sucesso/erro) */
+.search-message-wrapper {
+    /* Pode ser usado para envolver o contêiner de mensagem */
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.message-container {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9em;
+    margin: 0.5rem auto; /* Centraliza a mensagem */
+    max-width: fit-content; /* Para que a caixa não se estenda demais */
+    display: block; /* Para margin: auto funcionar */
+}
+
+.message-container.info {
+    background-color: #e0f7fa;
+    color: #00796b;
+    border: 1px solid #00acc1;
+}
+
+.message-container.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #4caf50;
+}
+
+.message-container.error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ef5350;
 }
 
 footer {
-    text-align: center;
-    padding: 1rem;
-    margin-top: 2rem;
-    background-color: #eee;
+    background-color: #6C5CE7; /* Mesma cor do header */
+    color: white;
+    padding: 1.5rem 1rem; /* Aumenta um pouco o padding */
+    text-align: center; /* Centraliza o texto */
+    margin-top: 2rem; /* Adiciona um espaço acima do footer */
+    width: 100%; /* Garante que ocupe a largura total */
+    box-sizing: border-box; /* Inclui padding na largura total */
+}
+
+footer p {
+    margin: 0; /* Remove margem padrão do parágrafo dentro do footer */
+    font-size: 0.9em;
+}
+
+/* --- Media Queries for Responsiveness --- */
+@media (max-width: 900px) {
+    .header-top-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .main-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .main-nav a {
+        display: block;
+        margin: 0 auto;
+        width: fit-content;
+    }
+    .search-container {
+        flex-direction: column;
+    }
+    #search-button {
+        width: 100%;
+    }
+    .auth-container {
+        padding: 1.5rem;
+        margin: 1rem auto;
+    }
+}
+
+@media (max-width: 500px) {
+    .site-title h1 {
+        font-size: 1.5em;
+    }
+    .site-icon {
+        width: 35px;
+        height: 35px;
+    }
+    #search-input, #search-button {
+        font-size: 1em;
+        padding: 10px 15px;
+    }
+    .auth-form-section h2 {
+        font-size: 1.5em;
+    }
+    .auth-button {
+        font-size: 1em;
+        padding: 10px 15px;
+    }
 }

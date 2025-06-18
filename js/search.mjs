@@ -1,15 +1,24 @@
-// search.js
+// js/search.mjs
 
-import { searchTracks } from './deezerApi.js'; // Assuming deezerApi.js exports a search function
-import { displaySearchResults } from './display.js'; // Assuming display.js exports a function to display results
+import { deezerApi } from './deezerApi.mjs'; 
+import { display } from './display.js'; // Ainda útil para displaySearchMessage
 
-/**
- * Initializes the search functionality.
- * Attaches event listeners to the search input and button.
- */
+function displaySearchMessage(message, type = 'info') {
+    const messageContainer = document.getElementById('search-message-container');
+    if (messageContainer) {
+        messageContainer.textContent = message;
+        messageContainer.className = `message-container ${type}`;
+        messageContainer.classList.remove('hidden');
+        setTimeout(() => {
+            messageContainer.classList.add('hidden');
+            messageContainer.textContent = '';
+        }, 3000);
+    }
+}
+
 export function initializeSearch() {
-    const searchInput = document.getElementById('search-input'); // Your search input field
-    const searchButton = document.getElementById('search-button'); // Your search button
+    const searchInput = document.getElementById('search-input'); 
+    const searchButton = document.getElementById('search-button'); 
 
     if (searchInput && searchButton) {
         searchButton.addEventListener('click', performSearch);
@@ -23,26 +32,39 @@ export function initializeSearch() {
     }
 }
 
-/**
- * Performs a search based on the input value.
- * Fetches data from Deezer API and displays results.
- */
 async function performSearch() {
     const searchInput = document.getElementById('search-input');
     const query = searchInput.value.trim();
 
     if (!query) {
-        alert('Please enter a search query.');
+        displaySearchMessage('Please enter a search query.', 'error');
         return;
     }
 
+    displaySearchMessage('Searching...', 'info');
+
     try {
-        console.log(`Searching for: ${query}`);
-        const data = await searchTracks(query); // Call the Deezer API function
-        console.log('Search results:', data);
-        displaySearchResults(data.data); // Assuming Deezer API returns data.data for tracks
+        console.log(`Searching for all types: ${query}`);
+        
+        const [tracksData, artistsData, albumsData] = await Promise.all([
+            deezerApi.generalSearch(query, 'tracks', 25),
+            deezerApi.generalSearch(query, 'artists', 10),
+            deezerApi.generalSearch(query, 'albums', 10)
+        ]);
+        
+        const searchResults = {
+            query: query,
+            tracks: tracksData.data || [],
+            artists: artistsData.data || [],
+            albums: albumsData.data || []
+        };
+
+        sessionStorage.setItem('searchResults', JSON.stringify(searchResults));
+
+        window.location.href = 'search_results.html';
+
     } catch (error) {
         console.error('Error during search:', error);
-        alert('Failed to perform search. Please try again later.');
+        displaySearchMessage('Failed to perform search. Please try again later.', 'error');
     }
 }

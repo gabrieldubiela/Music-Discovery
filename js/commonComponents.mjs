@@ -1,32 +1,51 @@
+// js/commonComponents.mjs (Versão Mais Recente e Correta)
+import { initializeSearch } from './search.mjs'; // Continua importando para inicializar a busca
+
 function createHeaderFooter() {
     const headerElement = document.getElementById('main-header');
     const footerElement = document.getElementById('main-footer');
 
     if (headerElement) {
-        // Check login status from localStorage
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const authLink = isLoggedIn 
-            ? '<a href="#" id="auth-link">Logout</a>' 
+        const authLink = isLoggedIn
+            ? '<a href="#" id="auth-link">Logout</a>'
             : '<a href="login.html" id="auth-link">Login</a>';
 
         headerElement.innerHTML = `
-            <h1>Music Discovery</h1>
-            <nav>
-                <a href="index.html">Home</a>
-                <a href="playlist.html">My Playlists</a>
-                ${authLink}
-            </nav>
+            <div class="header-content">
+                <div class="header-top-row">
+                    <div class="site-title">
+                        <img src="images/icon.png" alt="Music Discovery Icon" class="site-icon">
+                        <h1>Music Discovery</h1>
+                    </div>
+                    <nav class="main-nav">
+                        <a href="index.html">Home</a>
+                        <a href="manager.html">My Playlists</a>
+                        ${authLink}
+                    </nav>
+                </div>
+
+                <div class="search-section-wrapper">
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="Search for songs, artists, albums...">
+                        <button id="search-button">Search</button>
+                    </div>
+                    <div id="search-message-container"></div>
+                </div>
+            </div>
         `;
 
-        // Add event listener only if the auth link is for logging out
         if (isLoggedIn) {
             const authLinkElement = headerElement.querySelector('#auth-link');
             authLinkElement.addEventListener('click', (e) => {
                 e.preventDefault();
                 localStorage.removeItem('isLoggedIn');
-                window.location.reload(); // Reload the page to reflect changes
+                window.location.reload();
             });
         }
+
+        // Continua inicializando a busca aqui, pois a barra de busca está no header
+        initializeSearch(); 
     }
 
     if (footerElement) {
@@ -36,5 +55,6 @@ function createHeaderFooter() {
     }
 }
 
-// Call the function to create the header and footer as soon as the script is loaded
-document.addEventListener('DOMContentLoaded', createHeaderFooter);
+// Removido: document.addEventListener('DOMContentLoaded', createHeaderFooter);
+
+export { createHeaderFooter };

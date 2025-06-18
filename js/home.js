@@ -1,14 +1,13 @@
-// The main JavaScript file for the application
+// js/home.js
 
-import { initializeSearch } from './js/search.mjs';
-import { createHeaderFooter } from './js/commonComponents.mjs';
-
-document.addEventListener('DOMContentLoaded', () => {
-    initializeSearch();
-});
+// Removido: import { initializeSearch } from './js/search.mjs'; // Não é mais necessário aqui
+import { createHeaderFooter } from './commonComponents.mjs'; // Importa a função de criação do header/footer
+import { deezerApi } from './deezerApi.mjs';
+import { display } from './display.js';
 
 const main = {
     init: function() {
+        createHeaderFooter(); // Chama a função para criar o header e footer
         this.handleUserSession();
         this.fetchAndDisplayTrends();
         this.displayRecentlyPlayed();
@@ -17,15 +16,14 @@ const main = {
     handleUserSession: function() {
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         if (isLoggedIn) {
-            const newReleasesSection = document.getElementById('new-releases-section');
-            newReleasesSection.classList.remove('hidden');
-            this.fetchAndDisplayNewReleases();
+            // Removido: Chamadas e lógica relacionadas a 'New Releases'
         }
     },
 
     fetchAndDisplayTrends: async function() {
         const topTracks = await deezerApi.getChart('tracks');
-        display.renderTracks(topTracks.slice(0, 10), 'trending-tracks-container');
+        // Passa main.addToRecentlyPlayed como callback para renderTracks
+        display.renderTracks(topTracks.slice(0, 10), 'trending-tracks-container', false, this.addToRecentlyPlayed.bind(this));
 
         const topArtists = await deezerApi.getChart('artists');
         display.renderArtists(topArtists.slice(0, 10), 'trending-artists-container');
@@ -34,10 +32,8 @@ const main = {
         display.renderPlaylists(topPlaylists.slice(0, 10), 'trending-playlists-container');
     },
     
-    fetchAndDisplayNewReleases: async function() {
-        const newReleases = await deezerApi.getNewReleases();
-        display.renderAlbums(newReleases.slice(0, 10), 'new-releases-container');
-    },
+    // Removido: fetchAndDisplayNewReleases
+
     getRecentlyPlayed: function() {
         try {
             return JSON.parse(localStorage.getItem('recentlyPlayed')) || [];
@@ -63,10 +59,12 @@ const main = {
 
     displayRecentlyPlayed: function() {
         const recentlyPlayed = this.getRecentlyPlayed();
-        display.renderTracks(recentlyPlayed, 'recently-played-container', true);
+        // Passa main.addToRecentlyPlayed como callback para renderTracks
+        display.renderTracks(recentlyPlayed, 'recently-played-container', true, this.addToRecentlyPlayed.bind(this));
     }
 };
 
-createHeaderFooter();
-initializeSearch(); 
-document.addEventListener('DOMContentLoaded', () => main.init());
+// Garante que main.init é chamado ao carregar o DOM
+document.addEventListener('DOMContentLoaded', () => {
+    main.init();
+});
