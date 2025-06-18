@@ -1,5 +1,3 @@
-// js/deezerApi.mjs
-
 const deezerApi = {
     apiUrl: 'https://api.deezer.com',
 
@@ -18,7 +16,6 @@ const deezerApi = {
                 }
             };
 
-            // CORREÇÃO: Usa '?' se não houver parâmetros ainda, ou '&' se já houver
             const connector = path.includes('?') ? '&' : '?';
             script.src = `${this.apiUrl}${path}${connector}output=jsonp&callback=${callbackName}`;
             
@@ -32,7 +29,6 @@ const deezerApi = {
         });
     },
 
-    // FUNÇÕES DE GRÁFICOS E LANÇAMENTOS (MANTIDAS)
     getChart: async function(type = 'tracks') {
         try {
             const response = await this.jsonpRequest(`/chart/0/${type}`);
@@ -68,7 +64,7 @@ const deezerApi = {
             default:
                 console.warn(`Invalid search type: ${type}. Defaulting to 'tracks'.`);
                 endpoint = '/search';
-                type = 'tracks'; // Garante que o tipo padrão seja usado se for inválido
+                type = 'tracks'; 
         }
 
         try {
@@ -105,19 +101,17 @@ const deezerApi = {
             const response = await this.jsonpRequest(`/artist/${artistId}/top`);
             return response.data || [];
         } catch (error) {
-            console.error(`Erro ao buscar top tracks do artista ${artistId}:`, error);
+            console.error(`Fail to upload ${artistId}:`, error);
             return [];
         }
     },
 
     getArtistAlbums: async function(artistId) {
         try {
-            // Deezer API retorna todos os tipos de lançamentos (álbuns, singles, compilações)
-            // Você pode filtrar 'album' se quiser apenas álbuns completos.
             const response = await this.jsonpRequest(`/artist/${artistId}/albums`);
             return response.data || [];
         } catch (error) {
-            console.error(`Erro ao buscar álbuns do artista ${artistId}:`, error);
+            console.error(`Fail to upload ${artistId}:`, error);
             return [];
         }
     },
@@ -127,7 +121,7 @@ const deezerApi = {
             const response = await this.jsonpRequest(`/playlist/${playlistId}`);
             return response;
         } catch (error) {
-            console.error(`Erro ao buscar playlist ${playlistId}:`, error);
+            console.error(`Fail to upload ${playlistId}:`, error);
             return null;
         }
     },

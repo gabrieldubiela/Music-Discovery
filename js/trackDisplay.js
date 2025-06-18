@@ -1,5 +1,3 @@
-// js/trackDisplay.js
-
 import { createHeaderFooter } from './commonComponents.mjs';
 import { deezerApi } from './deezerApi.mjs';
 import { lastFmApi } from './lastFmApi.mjs';
@@ -14,7 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const track = await deezerApi.getTrack(trackId);
             if (track) {
-                // Tenta buscar informações adicionais do artista via AudioDB
                 let artistInfo = null;
                 if (track.artist && track.artist.name) {
                     try {
@@ -22,11 +19,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (audioDbArtistData && audioDbArtistData.artists && audioDbArtistData.artists.length > 0) {
                             artistInfo = audioDbArtistData.artists[0];
                         }
-                    } catch (audioDbError) {
-                        console.warn('Could not fetch artist info from AudioDB:', audioDbError);
+                    } catch (lastFmError) {
+                        console.warn('Could not fetch artist info:', lastFmError);
                     }
                 }
-                renderTrackDetails(track, artistInfo); // Passa artistInfo para a função de renderização
+                renderTrackDetails(track, artistInfo); 
             } else {
                 displayMessage('Track not found.', 'error');
             }
@@ -39,11 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/**
- * Renderiza os detalhes de uma faixa na página.
- * @param {Object} track - O objeto da faixa retornado pela Deezer API.
- * @param {Object} [artistInfo=null] - Informações adicionais do artista do AudioDB API.
- */
 function renderTrackDetails(track, artistInfo = null) {
     const container = document.getElementById('track-content');
     if (!container) {
@@ -56,7 +48,6 @@ function renderTrackDetails(track, artistInfo = null) {
 
     let artistBioHtml = '';
     if (artistInfo && artistInfo.strBiographyEN) {
-        // Exibe um resumo da biografia do artista
         artistBioHtml = `<p class="artist-bio-summary">About the artist: ${artistInfo.strBiographyEN.substring(0, 200)}...</p>`;
     }
 
@@ -82,18 +73,12 @@ function renderTrackDetails(track, artistInfo = null) {
     }
 }
 
-// ... (formatDuration e displayMessage permanecem os mesmos) ...
 function formatDuration(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
-/**
- * Exibe uma mensagem na página.
- * @param {string} message - A mensagem a ser exibida.
- * @param {string} type - O tipo da mensagem ('info', 'error').
- */
 function displayMessage(message, type = 'info') {
     const container = document.getElementById('track-details-container');
     if (container) {

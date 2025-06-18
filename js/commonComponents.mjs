@@ -1,5 +1,4 @@
-// js/commonComponents.mjs (Versão Mais Recente e Correta)
-import { initializeSearch } from './search.mjs'; // Continua importando para inicializar a busca
+import { initializeSearch } from './search.mjs';
 
 function createHeaderFooter() {
     const headerElement = document.getElementById('main-header');
@@ -20,7 +19,6 @@ function createHeaderFooter() {
                     </div>
                     <nav class="main-nav">
                         <a href="index.html">Home</a>
-                        <a href="manager.html">My Playlists</a>
                         ${authLink}
                     </nav>
                 </div>
@@ -43,8 +41,6 @@ function createHeaderFooter() {
                 window.location.reload();
             });
         }
-
-        // Continua inicializando a busca aqui, pois a barra de busca está no header
         initializeSearch(); 
     }
 
@@ -54,7 +50,4 @@ function createHeaderFooter() {
         `;
     }
 }
-
-// Removido: document.addEventListener('DOMContentLoaded', createHeaderFooter);
-
 export { createHeaderFooter };

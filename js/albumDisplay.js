@@ -1,9 +1,7 @@
-// js/albumDisplay.js
-
 import { createHeaderFooter } from './commonComponents.mjs';
 import { deezerApi } from './deezerApi.mjs';
 import { display } from './display.mjs';
-import { lastFmApi } from './lastFmApi.mjs'; // Importe o Last.fm API
+import { lastFmApi } from './lastFmApi.mjs'; 
 
 document.addEventListener('DOMContentLoaded', async () => {
     createHeaderFooter();
@@ -14,47 +12,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (albumId) {
         try {
             const album = await deezerApi.getAlbum(albumId);
-            let artistBioLastFm = null; // Para biografia do artista via Last.fm
-            let albumSummaryLastFm = null; // Para resumo do álbum via Last.fm
+            let artistBioLastFm = null; 
+            let albumSummaryLastFm = null; 
 
             if (album) {
-                // Tenta buscar informações adicionais do artista do álbum via Last.fm
                 if (album.artist && album.artist.name) {
                     try {
                         artistBioLastFm = await lastFmApi.getArtistInfo(album.artist.name);
                     } catch (lastFmArtistError) {
-                        console.warn('Não foi possível buscar informações do artista do Last.fm para o álbum:', lastFmArtistError);
+                        console.warn('Fail to upload:', lastFmArtistError);
                     }
                 }
 
-                // Tenta buscar informações adicionais do álbum via Last.fm (resumo/wiki)
                 if (album.artist && album.artist.name && album.title) {
                     try {
                         albumSummaryLastFm = await lastFmApi.getAlbumInfo(album.artist.name, album.title);
                     } catch (lastFmAlbumError) {
-                        console.warn('Não foi possível buscar informações do álbum do Last.fm:', lastFmAlbumError);
+                        console.warn('Fail to upload:', lastFmAlbumError);
                     }
                 }
                 
-                renderAlbumDetails(album, artistBioLastFm, albumSummaryLastFm); // Passa as novas infos
+                renderAlbumDetails(album, artistBioLastFm, albumSummaryLastFm); 
             } else {
-                displayMessage('Álbum não encontrado.', 'error');
+                displayMessage('Fail to upload.', 'error');
             }
         } catch (error) {
-            console.error('Erro ao carregar detalhes do álbum:', error);
-            displayMessage('Erro ao carregar detalhes do álbum. Por favor, tente novamente mais tarde.', 'error');
+            console.error('Fail to upload:', error);
+            displayMessage('Fail to upload.', 'error');
         }
     } else {
-        displayMessage('ID do álbum não fornecido na URL.', 'info');
+        displayMessage('Fail to upload.', 'info');
     }
 });
 
-/**
- * Renderiza os detalhes de um álbum na página.
- * @param {object} album - O objeto do álbum da API do Deezer.
- * @param {object|null} lastFmArtistInfo - Objeto com informações do artista do Last.fm (inclui bio).
- * @param {object|null} lastFmAlbumInfo - Objeto com informações do álbum do Last.fm (inclui summary).
- */
 function renderAlbumDetails(album, lastFmArtistInfo, lastFmAlbumInfo) {
     const container = document.getElementById('album-details');
     if (!container) {
@@ -68,7 +58,7 @@ function renderAlbumDetails(album, lastFmArtistInfo, lastFmAlbumInfo) {
     if (lastFmArtistInfo && lastFmArtistInfo.bio) {
         artistBioHtml = `
             <div class="artist-bio-section">
-                <h3>Biografia do Artista (${album.artist.name})</h3>
+                <h3>Biograph of (${album.artist.name})</h3>
                 <p>${lastFmArtistInfo.bio}</p>
             </div>
         `;
@@ -78,7 +68,7 @@ function renderAlbumDetails(album, lastFmArtistInfo, lastFmAlbumInfo) {
     if (lastFmAlbumInfo && lastFmAlbumInfo.summary) {
         albumSummaryHtml = `
             <div class="album-summary-section">
-                <h3>Sobre o Álbum (${album.title})</h3>
+                <h3>About Album (${album.title})</h3>
                 <p>${lastFmAlbumInfo.summary}</p>
             </div>
         `;
@@ -89,12 +79,12 @@ function renderAlbumDetails(album, lastFmArtistInfo, lastFmAlbumInfo) {
             <img class="album-cover" src="${imageUrl}" alt="${album.title}">
             <div class="album-info">
                 <h2 class="album-title">${album.title}</h2>
-                <p class="album-artist">Artista: <a href="artist.html?id=${album.artist.id}">${album.artist.name}</a></p>
-                <p class="album-release-date">Data de Lançamento: ${album.release_date}</p>
-                <p class="album-num-tracks">Número de Faixas: ${album.nb_tracks}</p>
+                <p class="album-artist">Artist: <a href="artist.html?id=${album.artist.id}">${album.artist.name}</a></p>
+                <p class="album-release-date">Release: ${album.release_date}</p>
+                <p class="album-num-tracks">Tracks: ${album.nb_tracks}</p>
                 
                 ${albumSummaryHtml} ${artistBioHtml}   <div id="album-tracks-container" class="card-container">
-                    <h3>Faixas</h3>
+                    <h3>Tracks</h3>
                 </div>
             </div>
         </div>
@@ -106,12 +96,12 @@ function renderAlbumDetails(album, lastFmArtistInfo, lastFmAlbumInfo) {
         };
         display.renderTracks(album.tracks.data, 'album-tracks-container', false, trackCardClickHandler);
     } else {
-        document.getElementById('album-tracks-container').innerHTML = '<p>Nenhuma faixa encontrada para este álbum.</p>';
+        document.getElementById('album-tracks-container').innerHTML = '<p>Fail to upload.</p>';
     }
 }
 
 function displayMessage(message, type = 'info') {
-    const container = document.getElementById('album-details'); // Corrigido o ID aqui
+    const container = document.getElementById('album-details'); 
     if (!container) return;
 
     container.innerHTML = `<div class="message ${type}">${message}</div>`;
