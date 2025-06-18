@@ -1,4 +1,11 @@
 // The main JavaScript file for the application
+
+import { initializeSearch } from './js/search.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSearch();
+});
+
 const main = {
     init: function() {
         console.log("Music Discovery App Initialized");
