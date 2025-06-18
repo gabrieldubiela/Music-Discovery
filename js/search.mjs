@@ -1,7 +1,7 @@
 // js/search.mjs
 
 import { deezerApi } from './deezerApi.mjs'; 
-import { display } from './display.js'; // Ainda útil para displaySearchMessage
+import { display } from './display.mjs'; // Ainda útil para displaySearchMessage
 
 function displaySearchMessage(message, type = 'info') {
     const messageContainer = document.getElementById('search-message-container');

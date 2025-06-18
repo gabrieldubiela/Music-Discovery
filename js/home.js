@@ -1,70 +1,87 @@
 // js/home.js
 
-// Removido: import { initializeSearch } from './js/search.mjs'; // Não é mais necessário aqui
-import { createHeaderFooter } from './commonComponents.mjs'; // Importa a função de criação do header/footer
-import { deezerApi } from './deezerApi.mjs';
-import { display } from './display.js';
+import { initializeSearch } from './search.mjs';
+import { createHeaderFooter } from './commonComponents.mjs';
+import { display } from './display.mjs';
+import { deezerApi } from './deezerApi.mjs'; // Certifique-se que esta linha está presente e correta
+
+document.addEventListener('DOMContentLoaded', () => {
+    createHeaderFooter(); // Inicializa o cabeçalho/rodapé e a busca via commonComponents.mjs
+    main.init(); // Chama a função de inicialização do objeto main
+});
 
 const main = {
     init: function() {
-        createHeaderFooter(); // Chama a função para criar o header e footer
-        this.handleUserSession();
         this.fetchAndDisplayTrends();
         this.displayRecentlyPlayed();
     },
 
-    handleUserSession: function() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        if (isLoggedIn) {
-            // Removido: Chamadas e lógica relacionadas a 'New Releases'
+    fetchAndDisplayTrends: async function() {
+        // Faixas em Destaque
+        try {
+            const topTracks = await deezerApi.getChart('tracks');
+            display.renderTracks(topTracks.slice(0, 10), 'trending-tracks-container', false, (trackId) => {
+                main.addToRecentlyPlayed(trackId);
+                window.location.href = `track.html?id=${trackId}`;
+            });
+        } catch (error) {
+            console.error('Erro ao buscar e exibir faixas em destaque:', error);
+        }
+
+        // Artistas em Destaque
+        try {
+            const topArtists = await deezerApi.getChart('artists');
+            display.renderArtists(topArtists.slice(0, 10), 'trending-artists-container', (artistId) => {
+                window.location.href = `artist.html?id=${artistId}`;
+            });
+        } catch (error) {
+            console.error('Erro ao buscar e exibir artistas em destaque:', error);
+        }
+
+        // Playlists em Destaque
+        try {
+            const topPlaylists = await deezerApi.getChart('playlists'); // CORRIGIDO AQUI: topPlaylists
+            display.renderPlaylists(topPlaylists.slice(0, 10), 'trending-playlists-container');
+        } catch (error) {
+            console.error('Erro ao buscar e exibir playlists em destaque:', error);
         }
     },
-
-    fetchAndDisplayTrends: async function() {
-        const topTracks = await deezerApi.getChart('tracks');
-        // Passa main.addToRecentlyPlayed como callback para renderTracks
-        display.renderTracks(topTracks.slice(0, 10), 'trending-tracks-container', false, this.addToRecentlyPlayed.bind(this));
-
-        const topArtists = await deezerApi.getChart('artists');
-        display.renderArtists(topArtists.slice(0, 10), 'trending-artists-container');
-
-        const topPlaylists = await deezerApi.getChart('playlists');
-        display.renderPlaylists(topPlaylists.slice(0, 10), 'trending-playlists-container');
-    },
-    
-    // Removido: fetchAndDisplayNewReleases
 
     getRecentlyPlayed: function() {
         try {
             return JSON.parse(localStorage.getItem('recentlyPlayed')) || [];
         } catch (e) {
+            console.error("Erro ao ler 'recentlyPlayed' do localStorage:", e);
             return [];
         }
     },
 
     addToRecentlyPlayed: async function(trackId) {
-        console.log(`Simulating playing track ID: ${trackId}`);
+        console.log(`Simulando reprodução da faixa ID: ${trackId}`);
         
-        const track = await deezerApi.getTrack(trackId);
+        try {
+            const track = await deezerApi.getTrack(trackId);
 
-        if (track && track.id) {
-            let recentlyPlayed = this.getRecentlyPlayed();
-            recentlyPlayed = recentlyPlayed.filter(t => t.id !== track.id);
-            recentlyPlayed.unshift(track);
-            recentlyPlayed = recentlyPlayed.slice(0, 5);
-            localStorage.setItem('recentlyPlayed', JSON.stringify(recentlyPlayed));
-            this.displayRecentlyPlayed();
+            if (track && track.id) {
+                let recentlyPlayed = this.getRecentlyPlayed();
+                recentlyPlayed = recentlyPlayed.filter(t => t.id !== track.id);
+                recentlyPlayed.unshift(track);
+                recentlyPlayed = recentlyPlayed.slice(0, 5);
+                localStorage.setItem('recentlyPlayed', JSON.stringify(recentlyPlayed));
+                this.displayRecentlyPlayed();
+            }
+        } catch (error) {
+            console.error('Erro ao adicionar faixa aos recentemente reproduzidos:', error);
         }
     },
 
     displayRecentlyPlayed: function() {
         const recentlyPlayed = this.getRecentlyPlayed();
-        // Passa main.addToRecentlyPlayed como callback para renderTracks
-        display.renderTracks(recentlyPlayed, 'recently-played-container', true, this.addToRecentlyPlayed.bind(this));
-    }
+        display.renderTracks(recentlyPlayed, 'recently-played-container', true, (trackId) => {
+            main.addToRecentlyPlayed(trackId);
+            window.location.href = `track.html?id=${trackId}`;
+        });
+    },
 };
 
-// Garante que main.init é chamado ao carregar o DOM
-document.addEventListener('DOMContentLoaded', () => {
-    main.init();
-});
+export { main };

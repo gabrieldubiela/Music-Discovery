@@ -79,6 +79,59 @@ const deezerApi = {
             return { data: [] };
         }
     },
+
+    getAlbum: async function(albumId) {
+        try {
+            const response = await this.jsonpRequest(`/album/${albumId}`);
+            return response;
+        } catch (error) {
+            console.error(`Error fetching album ${albumId}:`, error);
+            return null;
+        }
+    },
+
+    getArtist: async function(artistId) {
+        try {
+            const response = await this.jsonpRequest(`/artist/${artistId}`);
+            return response;
+        } catch (error) {
+            console.error(`Error fetching artist ${artistId}:`, error);
+            return null;
+        }
+    },
+
+    getArtistTopTracks: async function(artistId) {
+        try {
+            const response = await this.jsonpRequest(`/artist/${artistId}/top`);
+            return response.data || [];
+        } catch (error) {
+            console.error(`Erro ao buscar top tracks do artista ${artistId}:`, error);
+            return [];
+        }
+    },
+
+    getArtistAlbums: async function(artistId) {
+        try {
+            // Deezer API retorna todos os tipos de lançamentos (álbuns, singles, compilações)
+            // Você pode filtrar 'album' se quiser apenas álbuns completos.
+            const response = await this.jsonpRequest(`/artist/${artistId}/albums`);
+            return response.data || [];
+        } catch (error) {
+            console.error(`Erro ao buscar álbuns do artista ${artistId}:`, error);
+            return [];
+        }
+    },
+
+    getPlaylist: async function(playlistId) {
+        try {
+            const response = await this.jsonpRequest(`/playlist/${playlistId}`);
+            return response;
+        } catch (error) {
+            console.error(`Erro ao buscar playlist ${playlistId}:`, error);
+            return null;
+        }
+    },
+
 };
 
 export { deezerApi };
